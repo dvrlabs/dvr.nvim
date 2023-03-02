@@ -9,7 +9,6 @@ return {
                 ["core.norg.dirman"] = { -- Manages Neorg workspaces
                     config = {
                         workspaces = {
-                            notes = "~/work/notes",
                         },
                     },
                 },
