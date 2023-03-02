@@ -25,6 +25,7 @@ return {
             require('mini.animate').setup()
             require('mini.sessions').setup()
             require('mini.tabline').setup()
+            require('mini.comment').setup()
             require('mini.starter').setup({
                 header = header_txt,
                 footer = footer_txt,

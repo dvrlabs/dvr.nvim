@@ -1,22 +1,8 @@
 --[[
 
 =====================================================================
-==================== READ THIS BEFORE CONTINUING ====================
+==================== DVR ============================================
 =====================================================================
-
-  If you don't know anything about Lua, I recommend taking some time to read through
-  a guide. One possible example:
-  - https://learnxinyminutes.com/docs/lua/
-
-  And then you can explore or search through `:help lua-guide`
-
-I have left several `:help X` comments throughout the init.lua
-You should run that command and read that help section for more information.
-
-In addition, I have some `NOTE:` items throughout the file.
-
-I hope you enjoy your Neovim journey,
-- TJ
 
 --]]
 
@@ -36,7 +22,7 @@ if not vim.loop.fs_stat(lazypath) then
     'clone',
     '--filter=blob:none',
     'https://github.com/folke/lazy.nvim.git',
-    '--branch=stable', -- latest stable release
+    '--branch=stable',
     lazypath,
   }
 end
@@ -128,9 +114,6 @@ require('lazy').setup({
     },
   },
 
-  -- "gc" to comment visual regions/lines
-  { 'numToStr/Comment.nvim', opts = {} },
-
   -- Fuzzy Finder (files, lsp, etc)
   { 'nvim-telescope/telescope.nvim', version = '*', dependencies = { 'nvim-lua/plenary.nvim' } },
 
@@ -157,20 +140,6 @@ require('lazy').setup({
     end,
   },
 
-  -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
-  --       These are some example plugins that I've included in the kickstart repository.
-  --       Uncomment any of the lines below to enable them.
-  -- require 'kickstart.plugins.autoformat',
-  -- require 'kickstart.plugins.debug',
-
-  -- NOTE: The import below automatically adds your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
-  --    You can use this folder to prevent any conflicts with this init.lua if you're interested in keeping
-  --    up-to-date with whatever is in the kickstart repo.
-  --
-  --    For additional information see: https://github.com/folke/lazy.nvim#-structuring-your-plugins
-  --
-  --    An additional note is that if you only copied in the `init.lua`, you can just comment this line
-  --    to get rid of the warning telling you that there are not plugins in `lua/custom/plugins/`.
   { import = 'plugins' },
 }, {})
 
@@ -217,6 +186,9 @@ vim.o.completeopt = 'menuone,noselect'
 
 -- NOTE: You should make sure your terminal supports this
 vim.o.termguicolors = true
+
+-- Hidden by default.
+vim.o.showtabline = 0
 
 -- [[ Basic Keymaps ]]
 
@@ -342,16 +314,66 @@ require('nvim-treesitter.configs').setup {
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = "Go to previous diagnostic message" })
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = "Go to next diagnostic message" })
 -- vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = "Open floating diagnostic message" })
-vim.keymap.set('n', '<leader>e', ':Neotree toggle<CR>', { desc = "Toggle neo-tree", silent=true })
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = "Open diagnostics list" })
+-- vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = "Open diagnostics list" })
 
--- Ui keymaps
-vim.keymap.set('n', '<leader>ub', ':exec &bg=="light"? "set bg=dark" : "set bg=light"<CR>', {noremap = true, silent = true, desc = "Toggle background"})
-vim.keymap.set('n', '<leader>ut', ':exec &showtabline==2? "set showtabline=0" : "set showtabline=2"<CR>', {desc = "Toggle Tabline"})
+-- Ui 'Toggle' keymaps
+vim.keymap.set('n', '<leader>ub', ':exec &bg=="light"? "set bg=dark" : "set bg=light"<CR>',
+  {noremap = true, silent = true, desc = "[U]i Toggle [B]ackground"})
 
--- Buffer navigation
-vim.keymap.set('n', 'J', ':bp<CR>', {noremap = true, silent=true})
-vim.keymap.set('n', 'K', ':bn<CR>', {noremap = true, silent=true})
+vim.keymap.set('n', '<leader>ut', ':exec &showtabline==2? "set showtabline=0" : "set showtabline=2"<CR>',
+  {noremap = true, silent = true, desc = "[U]i Toggle [T]abline"})
+
+vim.keymap.set('n', '<leader>uc', ':exec &conceallevel==3? "set conceallevel=0" : "set conceallevel=3"<CR>',
+  {noremap = true, silent = true, desc = "[U]i Toggle [C]onceal"})
+
+--[[ Windows && Buffers ]] --
+
+-- These now will navigate to bottom/top of buffer.
+vim.keymap.set('n', 'J', 'L', {noremap = true, silent=true})
+vim.keymap.set('n', 'K', 'H', {noremap = true, silent=true})
+
+-- These are used to switch previous, next buffer.
+vim.keymap.set('n', 'H', ':bp<CR>', {noremap = true, silent=true})
+vim.keymap.set('n', 'L', ':bn<CR>', {noremap = true, silent=true})
+
+-- Simplify Left, right, down, up, window navigation.
+vim.keymap.set('n', '<C-h>', '<C-w>h', {noremap = true, silent=true})
+vim.keymap.set('n', '<C-l>', '<C-w>l', {noremap = true, silent=true})
+vim.keymap.set('n', '<C-j>', '<C-w>j', {noremap = true, silent=true})
+vim.keymap.set('n', '<C-k>', '<C-w>k', {noremap = true, silent=true})
+
+-- Simplify resizing windows
+vim.keymap.set('n', '<Up>', '<C-w>+', {noremap = true, silent=true})
+vim.keymap.set('n', '<Down>', '<C-w>-', {noremap = true, silent=true})
+vim.keymap.set('n', '<Left>', '<C-w><', {noremap = true, silent=true})
+vim.keymap.set('n', '<Right>', '<C-w>>', {noremap = true, silent=true})
+
+-- Window Splits
+vim.keymap.set('n', '<leader>v', '<C-w>v', {noremap = true, silent=true, desc="Vertical split window"})
+
+-- Delete buffer
+vim.keymap.set('n', '<leader>d', ':bd<CR>', {desc="[d]elete buffer", noremap = true, silent=true})
+vim.keymap.set('n', '<leader>D', ':bd!<CR>', {desc="Force [D]elete buffer", noremap = true, silent=true})
+
+-- Quit Window
+vim.keymap.set('n', '<leader>q', ':q<CR>', { desc = "[q]uit" })
+vim.keymap.set('n', '<leader>Q', ':q!<CR>', { desc = "Force [Q]uit" })
+
+-- File tree!
+vim.keymap.set('n', '<leader>e', ':Neotree toggle<CR>', { desc = "[e] Toggle Neo-tree", silent=true })
+
+-- Repeat last macro with ',' instead of '@@'
+vim.keymap.set('n', ',', '@@', {})
+
+-- Use with term to be able to exit 'insert' mode via ESC
+vim.cmd([[:tnoremap <Esc> <C-\><C-n>]])
+
+-- Split below by default, rather on top.
+vim.cmd([[:set sb]])
+
+-- Open split open terminal and resize 
+vim.keymap.set('n', '<leader>t', ':split | resize 10 | term<CR>', {desc = "Open [t]erminal", silent=true})
+
 
 -- LSP settings.
 --  This function gets run when an LSP connects to a particular buffer.
@@ -370,19 +392,27 @@ local on_attach = function(_, bufnr)
     vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
   end
 
+  local snmap = function(keys, func, desc)
+    if desc then
+      desc = 'LSP: ' .. desc
+    end
+
+    vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc, silent = true })
+  end
+
   nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
   nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
 
   nmap('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
   nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
   nmap('gI', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
-  nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
-  nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
+  -- nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
+  -- nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
   nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
 
   -- See `:help K` for why this keymap
   -- nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
-  nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
+  -- nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
 
   -- Lesser used LSP functionality
   nmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
@@ -396,6 +426,8 @@ local on_attach = function(_, bufnr)
   vim.api.nvim_buf_create_user_command(bufnr, 'Format', function(_)
     vim.lsp.buf.format()
   end, { desc = 'Format current buffer with LSP' })
+
+  snmap('<leader>f', ":Format<CR>", '[F]ormat Buffer ')
 end
 
 -- Enable the following language servers
