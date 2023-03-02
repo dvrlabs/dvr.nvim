@@ -1,7 +1,8 @@
-# kickstart.nvim
+# dvr.nvim
 
 ### Introduction
 
+Backup or delete your current neovim configs.
 
 ```
 mv ~/.config/nvim ~/.config/nvim.bak
