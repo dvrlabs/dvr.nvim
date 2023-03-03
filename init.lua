@@ -28,120 +28,8 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
--- NOTE: Here is where you install your plugins.
---  You can configure plugins using the `config` key.
---
---  You can also configure plugins after the setup call,
---    as they will be available in your neovim runtime.
-require('lazy').setup({
-  -- NOTE: First, some plugins that don't require any configuration
-
-  -- Git related plugins
-  'tpope/vim-fugitive',
-  'tpope/vim-rhubarb',
-
-  -- Detect tabstop and shiftwidth automatically
-  'tpope/vim-sleuth',
-
-  -- NOTE: This is where your plugins related to LSP can be installed.
-  --  The configuration is done below. Search for lspconfig to find it below.
-  { -- LSP Configuration & Plugins
-    'neovim/nvim-lspconfig',
-    dependencies = {
-      -- Automatically install LSPs to stdpath for neovim
-      'williamboman/mason.nvim',
-      'williamboman/mason-lspconfig.nvim',
-
-      -- Useful status updates for LSP
-      -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      { 'j-hui/fidget.nvim', opts = {} },
-
-      -- Additional lua configuration, makes nvim stuff amazing!
-      'folke/neodev.nvim',
-    },
-  },
-
-  { -- Autocompletion
-    'hrsh7th/nvim-cmp',
-    dependencies = { 'hrsh7th/cmp-nvim-lsp', 'L3MON4D3/LuaSnip', 'saadparwaiz1/cmp_luasnip' },
-  },
-
-  -- Useful plugin to show you pending keybinds.
-  { 'folke/which-key.nvim', opts = {} },
-  { -- Adds git releated signs to the gutter, as well as utilities for managing changes
-    'lewis6991/gitsigns.nvim',
-    opts = {
-      -- See `:help gitsigns.txt`
-      signs = {
-        add = { text = '+' },
-        change = { text = '~' },
-        delete = { text = '_' },
-        topdelete = { text = '‾' },
-        changedelete = { text = '~' },
-      },
-    },
-  },
-
-  { -- The forest
-    'sainnhe/everforest',
-    priority = 1000,
-    config = function()
-      vim.cmd.colorscheme 'everforest'
-      vim.g.everforest_background = 'hard'
-    end,
-  },
-
-  { -- Set lualine as statusline
-    'nvim-lualine/lualine.nvim',
-    -- See `:help lualine.txt`
-    opts = {
-      options = {
-        icons_enabled = false,
-        theme = 'everforest',
-        component_separators = '|',
-        section_separators = '',
-      },
-    },
-  },
-
-  { -- Add indentation guides even on blank lines
-    'lukas-reineke/indent-blankline.nvim',
-    -- Enable `lukas-reineke/indent-blankline.nvim`
-    -- See `:help indent_blankline.txt`
-    opts = {
-      char = '┊',
-      show_trailing_blankline_indent = false,
-    },
-  },
-
-  -- Fuzzy Finder (files, lsp, etc)
-  { 'nvim-telescope/telescope.nvim', version = '*', dependencies = { 'nvim-lua/plenary.nvim' } },
-
-  -- Fuzzy Finder Algorithm which requires local dependencies to be built.
-  -- Only load if `make` is available. Make sure you have the system
-  -- requirements installed.
-  {
-    'nvim-telescope/telescope-fzf-native.nvim',
-    -- NOTE: If you are having trouble with this installation,
-    --       refer to the README for telescope-fzf-native for more instructions.
-    build = 'make',
-    cond = function()
-      return vim.fn.executable 'make' == 1
-    end,
-  },
-
-  { -- Highlight, edit, and navigate code
-    'nvim-treesitter/nvim-treesitter',
-    dependencies = {
-      'nvim-treesitter/nvim-treesitter-textobjects',
-    },
-    config = function()
-      pcall(require('nvim-treesitter.install').update { with_sync = true })
-    end,
-  },
-
-  { import = 'plugins' },
-}, {})
+-- Import all my plugins! 
+require('lazy').setup({ { import = 'plugins' } })
 
 -- [[ Setting options ]]
 -- See `:help vim.o`
@@ -190,8 +78,13 @@ vim.o.termguicolors = true
 -- Hidden by default.
 vim.o.showtabline = 0
 
--- [[ Basic Keymaps ]]
+-- Use with term to be able to exit 'insert' mode via ESC
+vim.cmd([[:tnoremap <Esc> <C-\><C-n>]])
 
+-- Split below by default, rather than on top.
+vim.cmd([[:set sb]])
+
+-- [[ Keymaps ]]
 -- Keymaps for better default experience
 -- See `:help vim.keymap.set()`
 vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
@@ -200,16 +93,61 @@ vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 
--- [[ Highlight on yank ]]
--- See `:help vim.highlight.on_yank()`
-local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
-vim.api.nvim_create_autocmd('TextYankPost', {
-  callback = function()
-    vim.highlight.on_yank()
-  end,
-  group = highlight_group,
-  pattern = '*',
-})
+-- Diagnostic keymaps
+vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = "Go to previous diagnostic message" })
+vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = "Go to next diagnostic message" })
+-- vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = "Open floating diagnostic message" })
+-- vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = "Open diagnostics list" })
+
+-- Ui 'Toggle' keymaps
+vim.keymap.set('n', '<leader>ub', ':exec &bg=="light"? "set bg=dark" : "set bg=light"<CR>',
+  {noremap = true, silent = true, desc = "[U]i Toggle [B]ackground"})
+
+vim.keymap.set('n', '<leader>ut', ':exec &showtabline==2? "set showtabline=0" : "set showtabline=2"<CR>',
+  {noremap = true, silent = true, desc = "[U]i Toggle [T]abline"})
+
+vim.keymap.set('n', '<leader>uc', ':exec &conceallevel==3? "set conceallevel=0" : "set conceallevel=3"<CR>',
+  {noremap = true, silent = true, desc = "[U]i Toggle [C]onceal"})
+
+-- These now will navigate to bottom/top of buffer.
+vim.keymap.set('n', 'J', 'L', {noremap = true, silent=true})
+vim.keymap.set('n', 'K', 'H', {noremap = true, silent=true})
+
+-- These are used to switch previous, next buffer.
+vim.keymap.set('n', 'H', ':bp<CR>', {noremap = true, silent=true})
+vim.keymap.set('n', 'L', ':bn<CR>', {noremap = true, silent=true})
+
+-- Simplify Left, right, down, up, window navigation.
+vim.keymap.set('n', '<C-h>', '<C-w>h', {noremap = true, silent=true})
+vim.keymap.set('n', '<C-l>', '<C-w>l', {noremap = true, silent=true})
+vim.keymap.set('n', '<C-j>', '<C-w>j', {noremap = true, silent=true})
+vim.keymap.set('n', '<C-k>', '<C-w>k', {noremap = true, silent=true})
+
+-- Simplify resizing windows
+vim.keymap.set('n', '<Up>', '<C-w>+', {noremap = true, silent=true})
+vim.keymap.set('n', '<Down>', '<C-w>-', {noremap = true, silent=true})
+vim.keymap.set('n', '<Left>', '<C-w><', {noremap = true, silent=true})
+vim.keymap.set('n', '<Right>', '<C-w>>', {noremap = true, silent=true})
+
+-- Window Splits
+vim.keymap.set('n', '<leader>v', '<C-w>v', {noremap = true, silent=true, desc="Vertical split window"})
+
+-- Delete buffer
+vim.keymap.set('n', '<leader>d', ':bd<CR>', {desc="[d]elete buffer", noremap = true, silent=true})
+vim.keymap.set('n', '<leader>D', ':bd!<CR>', {desc="Force [D]elete buffer", noremap = true, silent=true})
+
+-- Quit Window
+vim.keymap.set('n', '<leader>q', ':q<CR>', { desc = "[q]uit" })
+vim.keymap.set('n', '<leader>Q', ':q!<CR>', { desc = "Force [Q]uit" })
+
+-- File tree!
+vim.keymap.set('n', '<leader>e', ':Neotree toggle<CR>', { desc = "[e] Toggle Neo-tree", silent=true })
+
+-- Repeat last macro with ',' instead of '@@'
+vim.keymap.set('n', ',', '@@', {})
+
+-- Open split open terminal and resize 
+vim.keymap.set('n', '<leader>t', ':split | resize 10 | term<CR>', {desc = "Open [t]erminal", silent=true})
 
 -- [[ Configure Telescope ]]
 -- See `:help telescope` and `:help telescope.setup()`
@@ -310,69 +248,6 @@ require('nvim-treesitter.configs').setup {
   },
 }
 
--- Diagnostic keymaps
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = "Go to previous diagnostic message" })
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = "Go to next diagnostic message" })
--- vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = "Open floating diagnostic message" })
--- vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = "Open diagnostics list" })
-
--- Ui 'Toggle' keymaps
-vim.keymap.set('n', '<leader>ub', ':exec &bg=="light"? "set bg=dark" : "set bg=light"<CR>',
-  {noremap = true, silent = true, desc = "[U]i Toggle [B]ackground"})
-
-vim.keymap.set('n', '<leader>ut', ':exec &showtabline==2? "set showtabline=0" : "set showtabline=2"<CR>',
-  {noremap = true, silent = true, desc = "[U]i Toggle [T]abline"})
-
-vim.keymap.set('n', '<leader>uc', ':exec &conceallevel==3? "set conceallevel=0" : "set conceallevel=3"<CR>',
-  {noremap = true, silent = true, desc = "[U]i Toggle [C]onceal"})
-
---[[ Windows && Buffers ]] --
-
--- These now will navigate to bottom/top of buffer.
-vim.keymap.set('n', 'J', 'L', {noremap = true, silent=true})
-vim.keymap.set('n', 'K', 'H', {noremap = true, silent=true})
-
--- These are used to switch previous, next buffer.
-vim.keymap.set('n', 'H', ':bp<CR>', {noremap = true, silent=true})
-vim.keymap.set('n', 'L', ':bn<CR>', {noremap = true, silent=true})
-
--- Simplify Left, right, down, up, window navigation.
-vim.keymap.set('n', '<C-h>', '<C-w>h', {noremap = true, silent=true})
-vim.keymap.set('n', '<C-l>', '<C-w>l', {noremap = true, silent=true})
-vim.keymap.set('n', '<C-j>', '<C-w>j', {noremap = true, silent=true})
-vim.keymap.set('n', '<C-k>', '<C-w>k', {noremap = true, silent=true})
-
--- Simplify resizing windows
-vim.keymap.set('n', '<Up>', '<C-w>+', {noremap = true, silent=true})
-vim.keymap.set('n', '<Down>', '<C-w>-', {noremap = true, silent=true})
-vim.keymap.set('n', '<Left>', '<C-w><', {noremap = true, silent=true})
-vim.keymap.set('n', '<Right>', '<C-w>>', {noremap = true, silent=true})
-
--- Window Splits
-vim.keymap.set('n', '<leader>v', '<C-w>v', {noremap = true, silent=true, desc="Vertical split window"})
-
--- Delete buffer
-vim.keymap.set('n', '<leader>d', ':bd<CR>', {desc="[d]elete buffer", noremap = true, silent=true})
-vim.keymap.set('n', '<leader>D', ':bd!<CR>', {desc="Force [D]elete buffer", noremap = true, silent=true})
-
--- Quit Window
-vim.keymap.set('n', '<leader>q', ':q<CR>', { desc = "[q]uit" })
-vim.keymap.set('n', '<leader>Q', ':q!<CR>', { desc = "Force [Q]uit" })
-
--- File tree!
-vim.keymap.set('n', '<leader>e', ':Neotree toggle<CR>', { desc = "[e] Toggle Neo-tree", silent=true })
-
--- Repeat last macro with ',' instead of '@@'
-vim.keymap.set('n', ',', '@@', {})
-
--- Use with term to be able to exit 'insert' mode via ESC
-vim.cmd([[:tnoremap <Esc> <C-\><C-n>]])
-
--- Split below by default, rather on top.
-vim.cmd([[:set sb]])
-
--- Open split open terminal and resize 
-vim.keymap.set('n', '<leader>t', ':split | resize 10 | term<CR>', {desc = "Open [t]erminal", silent=true})
 
 
 -- LSP settings.
@@ -529,6 +404,17 @@ cmp.setup {
     { name = 'luasnip' },
   },
 }
+
+-- [[ Highlight on yank ]]
+-- See `:help vim.highlight.on_yank()`
+local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
+vim.api.nvim_create_autocmd('TextYankPost', {
+  callback = function()
+    vim.highlight.on_yank()
+  end,
+  group = highlight_group,
+  pattern = '*',
+})
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et

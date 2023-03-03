@@ -19,12 +19,15 @@ return {
         command_palette = true,
         long_message_to_split = true,
       },
+
+      -- Need this to show @recording
       routes = {
         {
-          view = "notify",
+          view = "cmdline",
           filter = { event = "msg_showmode" },
         },
       },
+
     },
     -- stylua: ignore
     keys = {
