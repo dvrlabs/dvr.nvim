@@ -20,10 +20,10 @@ mv ~/.cache/nvim ~/.cache/nvim.bak
 Option 2. Delete
 
 ```
-rm ~/.config/nvim 
-rm ~/.local/share/nvim 
-rm ~/.local/state/nvim 
-rm ~/.cache/nvim 
+rm -r ~/.config/nvim 
+rm -r ~/.local/share/nvim 
+rm -r ~/.local/state/nvim 
+rm -r ~/.cache/nvim 
 ```
 
 Option 3. Trash
