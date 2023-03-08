@@ -41,6 +41,16 @@ trash-put ~/.cache/nvim
 git clone https://github.com/dvrlabs/dvr.nvim ~/.config/nvim
 ```
 
+### Setup
+
+#### PYLSP completions
+
+To get proper completions with python (pylsp) in neovim
+
+edit: $HOME/.local/share/nvim/mason/packages/python-lsp-server/venv/pyvenv.cfg
+
+set `include-system-site-packages = true`
+
 ### Features
 
 #### UI Enhancements
