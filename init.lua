@@ -157,7 +157,16 @@ vim.keymap.set('n', '<leader>t', ':split | resize 10 | term<CR>', { desc = "Term
 
 -- Noice
 WK.register({ n = { name = "Noice", } }, { prefix = "<leader>" })
-vim.keymap.set('n', '<leader>nh', ':NoiceHistory<CR>', { desc = "History" })
+vim.keymap.set('n', '<leader>nh', ':NoiceHistory<CR>', { desc = "History", silent = true })
+
+-- [[ VimLeavePre ]]
+-- Stuff to do on exit.
+vim.api.nvim_create_autocmd('VimLeavePre', {
+  callback = function()
+    vim.cmd([[:mksession!]])
+  end,
+  pattern = '*',
+})
 
 -- [[ Configure Telescope ]]
 -- See `:help telescope` and `:help telescope.setup()`
