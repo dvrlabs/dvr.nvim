@@ -163,7 +163,7 @@ vim.keymap.set('n', '<leader>nh', ':NoiceHistory<CR>', { desc = "History", silen
 -- Stuff to do on exit.
 vim.api.nvim_create_autocmd('VimLeavePre', {
   callback = function()
-    vim.cmd([[:mksession!]])
+    vim.cmd([[:mksession! .session.vim]])
   end,
   pattern = '*',
 })

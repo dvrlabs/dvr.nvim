@@ -23,7 +23,9 @@ return {
         dependencies = { "nvim-tree/nvim-web-devicons" },
         config = function()
             require('mini.animate').setup()
-            require('mini.sessions').setup()
+            require('mini.sessions').setup({
+              file = '.session.vim',
+             })
             require('mini.tabline').setup()
             require('mini.comment').setup()
             require('mini.starter').setup({
