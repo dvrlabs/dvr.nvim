@@ -3,4 +3,4 @@ test.sh
 .luarc.json
 nvim
 lazy-lock.json
-.session.nvim
+.session.vim
