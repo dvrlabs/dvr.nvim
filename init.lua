@@ -136,7 +136,7 @@ vim.keymap.set('n', '<Right>', '<C-w>>', { noremap = true, silent = true })
 -- Window Splits
 vim.keymap.set('n', '<leader>v', '<C-w>v', { noremap = true, silent = true, desc = "V Split" })
 
--- Delete buffer
+-- Delete (Close) buffer
 -- WK.register({ b = { name = "Buffer", } }, { prefix = "<leader>" })
 vim.keymap.set('n', '<leader>c', ':bd!<CR>', { desc = "Close Buffer", noremap = true, silent = true })
 
@@ -152,8 +152,8 @@ vim.keymap.set('n', '<leader>e', ':Neotree toggle<CR>', { desc = "Neotree", sile
 -- Repeat last macro with ',' instead of '@@'
 vim.keymap.set('n', ',', '@@', {})
 
--- Open split open terminal and resize
-vim.keymap.set('n', '<leader>t', ':split | resize 10 | term<CR>', { desc = "Terminal", silent = true })
+-- Open split open terminal and resize, enter insert mode to work in terminal.
+vim.keymap.set('n', '<leader>t', ':split | resize 10 | term<CR>i', { desc = "Terminal", silent = true })
 
 -- Noice
 WK.register({ n = { name = "Noice", } }, { prefix = "<leader>" })
