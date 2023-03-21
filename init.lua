@@ -141,7 +141,7 @@ vim.keymap.set('n', '<leader>v', '<C-w>v', { noremap = true, silent = true, desc
 vim.keymap.set('n', '<leader>c', ':bd!<CR>', { desc = "Close Buffer", noremap = true, silent = true })
 
 -- Quit Window
-vim.keymap.set('n', '<leader>q', ':q<CR>', { desc = "Quit" })
+vim.keymap.set('n', '<leader>q', ':q<CR>', { desc = "Quit", silent = true })
 
 -- Save
 vim.keymap.set('n', '<leader>w', ':w<CR>', { desc = "Write" })
@@ -158,6 +158,16 @@ vim.keymap.set('n', '<leader>t', ':split | resize 10 | term<CR>i', { desc = "Ter
 -- Noice
 WK.register({ n = { name = "Noice", } }, { prefix = "<leader>" })
 vim.keymap.set('n', '<leader>nh', ':NoiceHistory<CR>', { desc = "History", silent = true })
+
+-- F5, execute code!
+local execute_code = function()
+    if vim.bo.filetype == "python" then
+        local run_cmd = "python " .. vim.fn.expand('%:p')
+        vim.cmd("split | resize 10 | term " .. run_cmd)
+    end
+end
+
+vim.keymap.set('n', '<F5>', execute_code , {})
 
 -- [[ VimLeavePre ]]
 -- Stuff to do on exit.
