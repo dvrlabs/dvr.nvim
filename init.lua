@@ -177,6 +177,7 @@ vim.keymap.set('n', '<F5>', execute_code , {})
 -- This function will close a terminal automatically if it gets the exit 0 text
 vim.api.nvim_create_autocmd('TextChangedT', {
   callback = function()
+    local buffer_name = vim.api.nvim_buf_get_name(0)
     local buffer_table = vim.api.nvim_buf_get_lines(0, 0, -1, false)
     local buffer_text = table.concat(buffer_table, '\n')
     if string.find(buffer_text, "Process exited 0") then
@@ -184,7 +185,7 @@ vim.api.nvim_create_autocmd('TextChangedT', {
       local timer = vim.loop.new_timer()
       timer:start(100, 0, function()
         vim.schedule(function()
-          vim.cmd("bdelete!")
+          vim.cmd("silent! bdelete" .. ' ' ..  buffer_name .. '!')
         end)
       end)
     end
