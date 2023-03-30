@@ -164,10 +164,34 @@ local execute_code = function()
     if vim.bo.filetype == "python" then
         local run_cmd = "python " .. vim.fn.expand('%:p')
         vim.cmd("split | resize 10 | term " .. run_cmd)
+        vim.cmd("startinsert")
     end
 end
 
 vim.keymap.set('n', '<F5>', execute_code , {})
+
+
+-- [[ TextChangedT ]]
+-- Stuff to do when text changes in a terminal. 
+
+-- This function will close a terminal automatically if it gets the exit 0 text
+vim.api.nvim_create_autocmd('TextChangedT', {
+  callback = function()
+    local buffer_table = vim.api.nvim_buf_get_lines(0, 0, -1, false)
+    local buffer_text = table.concat(buffer_table, '\n')
+    if string.find(buffer_text, "Process exited 0") then
+      vim.api.nvim_input('<ESC>')
+      local timer = vim.loop.new_timer()
+      timer:start(100, 0, function()
+        vim.schedule(function()
+          vim.cmd("bdelete!")
+        end)
+      end)
+
+    end
+  end,
+  pattern = '*',
+})
 
 -- [[ VimLeavePre ]]
 -- Stuff to do on exit.
