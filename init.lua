@@ -187,7 +187,6 @@ vim.api.nvim_create_autocmd('TextChangedT', {
           vim.cmd("bdelete!")
         end)
       end)
-
     end
   end,
   pattern = '*',
