@@ -161,18 +161,18 @@ vim.keymap.set('n', '<leader>nh', ':NoiceHistory<CR>', { desc = "History", silen
 
 -- F5, execute code!
 local execute_code = function()
-    if vim.bo.filetype == "python" then
-        local run_cmd = "python " .. vim.fn.expand('%:p')
-        vim.cmd("split | resize 10 | term " .. run_cmd)
-        vim.cmd("startinsert")
-    end
+  if vim.bo.filetype == "python" then
+    local run_cmd = "python " .. vim.fn.expand('%:p')
+    vim.cmd("split | resize 10 | term " .. run_cmd)
+    vim.cmd("startinsert")
+  end
 end
 
-vim.keymap.set('n', '<F5>', execute_code , {})
+vim.keymap.set('n', '<F5>', execute_code, {})
 
 
 -- [[ TextChangedT ]]
--- Stuff to do when text changes in a terminal. 
+-- Stuff to do when text changes in a terminal.
 
 -- This function will close a terminal automatically if it gets the exit 0 text
 vim.api.nvim_create_autocmd('TextChangedT', {
@@ -185,7 +185,7 @@ vim.api.nvim_create_autocmd('TextChangedT', {
       local timer = vim.loop.new_timer()
       timer:start(100, 0, function()
         vim.schedule(function()
-          vim.cmd("silent! bdelete" .. ' ' ..  buffer_name .. '!')
+          vim.cmd("silent! bdelete" .. ' ' .. buffer_name .. '!')
         end)
       end)
     end
@@ -201,6 +201,15 @@ vim.api.nvim_create_autocmd('VimLeavePre', {
   end,
   pattern = '*',
 })
+
+-- Python based settings
+vim.api.nvim_create_autocmd('BufEnter', {
+  callback = function()
+    vim.cmd([[:set foldlevel=2]])
+  end,
+  pattern = '*.py',
+})
+
 
 -- [[ Configure Telescope ]]
 -- See `:help telescope` and `:help telescope.setup()`
