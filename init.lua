@@ -168,6 +168,9 @@ local execute_code = function()
   end
 end
 
+-- Custom command that will take a list from a text file, and open buffers for each list.
+vim.cmd[[command OpenFileList let i=1 | while i <= line('$') | execute 'tabedit '.getline(i) | tabclose | let i += 1 | endwhile]]
+
 vim.keymap.set('n', '<F5>', execute_code, {})
 
 
