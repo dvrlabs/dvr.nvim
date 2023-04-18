@@ -143,8 +143,8 @@ vim.keymap.set('n', '<leader>c', ':bd!<CR>', { desc = "Close Buffer", noremap = 
 -- Quit Window
 vim.keymap.set('n', '<leader>q', ':q<CR>', { desc = "Quit", silent = true })
 
--- Save
-vim.keymap.set('n', '<leader>w', ':w<CR>', { desc = "Write" })
+-- Save, and then close the buffer. If you want to save only, use :w manually.
+vim.keymap.set('n', '<leader>w', ':w<CR>:bd!<CR>', { desc = "Write" })
 
 -- File tree!
 vim.keymap.set('n', '<leader>e', ':Neotree toggle<CR>', { desc = "Neotree", silent = true })
@@ -203,7 +203,7 @@ vim.api.nvim_create_autocmd('VimLeavePre', {
 })
 
 -- Python based settings
-vim.api.nvim_create_autocmd('BufEnter', {
+vim.api.nvim_create_autocmd('BufReadPost', {
   callback = function()
     vim.cmd([[:set foldlevel=2]])
   end,
