@@ -61,7 +61,6 @@ set `include-system-site-packages = true`
 - Everforest colorscheme - nice.
 
 #### Notes
-- Neorg - Note taking and knowledge base.
 
 #### Work flow
 - mini.comment - basic comment plugin.
