@@ -375,7 +375,7 @@ local servers = {
   pylsp = {
     plugins = {
       pycodestyle = {
-        ignore = {},
+        ignore = {"E731"},
         maxLineLength = 120
       }
     }
