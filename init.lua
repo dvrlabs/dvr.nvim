@@ -177,9 +177,10 @@ vim.keymap.set('n', '<leader>t', ':split | resize 10 | term<CR>i', { desc = "Ter
 -- Noice
 WK.register({ n = { name = "Noice", } }, { prefix = "<leader>" })
 vim.keymap.set('n', '<leader>nh', ':NoiceHistory<CR>', { desc = "History", silent = true })
+vim.keymap.set('n', '<leader>nd', ':NoiceDismiss<CR>', { desc = "Dismiss Messages", silent = true })
 
 -- Open Package Manager 
-vim.keymap.set('n', '<leader>p', ':Lazy<CR>', { desc = "Package Manager.", silent = true })
+vim.keymap.set('n', '<leader>p', ':Lazy<CR>', { desc = "Package Manager", silent = true })
 
 -- F5, execute code!
 local execute_code = function()
@@ -208,11 +209,13 @@ vim.api.nvim_create_autocmd('TextChangedT', {
     if string.find(buffer_text, "Process exited 0") then
       vim.api.nvim_input('<ESC>')
       local timer = vim.loop.new_timer()
-      timer:start(100, 0, function()
-        vim.schedule(function()
-          vim.cmd("silent! bdelete" .. ' ' .. buffer_name .. '!')
+      if timer then
+        timer:start(100, 0, function()
+          vim.schedule(function()
+            vim.cmd("silent! bdelete" .. ' ' .. buffer_name .. '!')
+          end)
         end)
-      end)
+      end
     end
   end,
   pattern = '*',
@@ -502,4 +505,4 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 })
 
 -- The line beneath this is called `modeline`. See `:help modeline`
---busy_loading.py vim: ts=2 sts=2 sw=2 et
+-- vim: ts=2 sts=2 sw=2 et
