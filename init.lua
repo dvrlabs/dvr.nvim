@@ -96,11 +96,30 @@ vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = tr
 vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 
 -- Diagnostic keymaps
-WK.register({ d = { name = "Diagnostics", } }, { prefix = "<leader>" })
-vim.keymap.set('n', '<leader>dp', vim.diagnostic.goto_prev, { desc = "Go to previous diagnostic message" })
-vim.keymap.set('n', '<leader>dn', vim.diagnostic.goto_next, { desc = "Go to next diagnostic message" })
-vim.keymap.set('n', '<leader>df', vim.diagnostic.open_float, { desc = "Open floating diagnostic message" })
-vim.keymap.set('n', '<leader>dl', vim.diagnostic.setloclist, { desc = "Open diagnostics list" })
+WK.register({ ld = { name = "Diagnostics", } }, { prefix = "<leader>" })
+
+-- Define the function for going to the next diagnostic
+local function goto_next_diagnostic()
+    vim.diagnostic.goto_next()
+    _G.last_action = goto_next_diagnostic
+end
+
+-- Define the function for going to the previous diagnostic
+local function goto_prev_diagnostic()
+    vim.diagnostic.goto_prev()
+    _G.last_action = goto_prev_diagnostic
+end
+
+-- Set your mappings using these functions
+vim.keymap.set('n', '<leader>ldn', goto_next_diagnostic, { desc = "Go to next diagnostic message", noremap = true, silent = true })
+vim.keymap.set('n', '<leader>ldp', goto_prev_diagnostic, { desc = "Go to previous diagnostic message", noremap = true, silent = true })
+
+vim.keymap.set('n', ',', function() if _G.last_action then _G.last_action() end end, { desc = "Repeat last action", noremap = true, silent = true })
+
+
+
+vim.keymap.set('n', '<leader>ldf', vim.diagnostic.open_float, { desc = "Open floating diagnostic message" })
+vim.keymap.set('n', '<leader>ldl', vim.diagnostic.setloclist, { desc = "Open diagnostics list" })
 
 -- Ui 'Toggle' keymaps
 WK.register({ u = { name = "UI", } }, { prefix = "<leader>" })
@@ -150,7 +169,7 @@ vim.keymap.set('n', '<leader>w', ':w<CR>:bd!<CR>', { desc = "Write" })
 vim.keymap.set('n', '<leader>e', ':Neotree toggle<CR>', { desc = "Neotree", silent = true })
 
 -- Repeat last macro with ',' instead of '@@'
-vim.keymap.set('n', ',', '@@', {})
+-- vim.keymap.set('n', ',', '@@', {})
 
 -- Open split open terminal and resize, enter insert mode to work in terminal.
 vim.keymap.set('n', '<leader>t', ':split | resize 10 | term<CR>i', { desc = "Terminal", silent = true })
@@ -158,6 +177,9 @@ vim.keymap.set('n', '<leader>t', ':split | resize 10 | term<CR>i', { desc = "Ter
 -- Noice
 WK.register({ n = { name = "Noice", } }, { prefix = "<leader>" })
 vim.keymap.set('n', '<leader>nh', ':NoiceHistory<CR>', { desc = "History", silent = true })
+
+-- Open Package Manager 
+vim.keymap.set('n', '<leader>p', ':Lazy<CR>', { desc = "Package Manager.", silent = true })
 
 -- F5, execute code!
 local execute_code = function()
@@ -343,7 +365,7 @@ local on_attach = function(_, bufnr)
   lsp_map('<leader>lgr', require('telescope.builtin').lsp_references, 'Goto References')
   lsp_map('<leader>lgI', vim.lsp.buf.implementation, 'Goto Implementation')
 
-  lsp_map('<leader>ld', vim.lsp.buf.type_definition, 'Type Definition')
+  lsp_map('<leader>lt', vim.lsp.buf.type_definition, 'Type Definition')
   lsp_map('<leader>ls', require('telescope.builtin').lsp_document_symbols, '(Document) Symbols')
   lsp_map('<leader>lS', require('telescope.builtin').lsp_dynamic_workspace_symbols, '(Workspace) Symbols')
 
@@ -375,6 +397,8 @@ local servers = {
   pylsp = {
     plugins = {
      ruff = {
+      -- Configure ruff by adding a pyproject.toml in the project root.
+      -- See https://github.com/charliermarsh/ruff
       enabled = true,
       extendSelect = { "I" },
      },
@@ -478,4 +502,4 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 })
 
 -- The line beneath this is called `modeline`. See `:help modeline`
--- vim: ts=2 sts=2 sw=2 et
+--busy_loading.py vim: ts=2 sts=2 sw=2 et
