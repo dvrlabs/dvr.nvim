@@ -191,11 +191,20 @@ local execute_code = function()
   end
 end
 
--- Custom command that will take a list from a text file, and open buffers for each list.
-vim.cmd [[command OpenFileList let i=1 | while i <= line('$') | execute 'tabedit '.getline(i) | tabclose | let i += 1 | endwhile]]
-
 vim.keymap.set('n', '<F5>', execute_code, {})
 
+
+-- Add to your init.lua or a Lua configuration file
+local substitute_prompt = function()
+    local find = vim.fn.input("Find: ")
+    local replace = vim.fn.input("Replace: ")
+    vim.cmd("silent! %s/" .. find .. "/" .. replace .. "/g")
+end
+
+vim.keymap.set('n', '<leader>r', substitute_prompt, {desc = "Replace"})
+
+-- Custom command that will take a list from a text file, and open buffers for each list.
+vim.cmd [[command OpenFileList let i=1 | while i <= line('$') | execute 'tabedit '.getline(i) | tabclose | let i += 1 | endwhile]]
 
 -- [[ TextChangedT ]]
 -- Stuff to do when text changes in a terminal.
@@ -407,17 +416,16 @@ local servers = {
      },
     }
   },
-  -- clangd = {},
-  -- gopls = {},
-  -- pyright = {},
-  -- rust_analyzer = {},
-  -- tsserver = {},
-
+  rust_analyzer = {},
   lua_ls = {
     Lua = {
       workspace = { checkThirdParty = false },
       telemetry = { enable = false },
     },
+  -- clangd = {},
+  -- gopls = {},
+  -- pyright = {},
+  -- tsserver = {},
   },
 }
 
