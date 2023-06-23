@@ -206,9 +206,6 @@ vim.keymap.set('n', '<leader>r', substitute_prompt, {desc = "Replace"})
 -- Custom command that will take a list from a text file, and open buffers for each list.
 vim.cmd [[command OpenFileList let i=1 | while i <= line('$') | execute 'tabedit '.getline(i) | tabclose | let i += 1 | endwhile]]
 
--- [[ TextChangedT ]]
--- Stuff to do when text changes in a terminal.
-
 -- This function will close a terminal automatically if it gets the exit 0 text
 vim.api.nvim_create_autocmd('TextChangedT', {
   callback = function()
@@ -230,6 +227,20 @@ vim.api.nvim_create_autocmd('TextChangedT', {
   pattern = '*',
 })
 
+-- If buffers > 1, show the tabline.
+vim.api.nvim_create_autocmd({'BufEnter'}, {
+  callback = function()
+    local buf_count = vim.fn.len(vim.fn.getbufinfo({buflisted=1}))
+    -- if there are more than one buffer, show the tabline, else hide it
+    if buf_count > 1 then
+      vim.o.showtabline = 2
+    else
+      vim.o.showtabline = 0
+    end
+  end,
+  pattern = '*',
+})
+
 -- [[ VimLeavePre ]]
 -- Stuff to do on exit.
 vim.api.nvim_create_autocmd('VimLeavePre', {
@@ -240,6 +251,7 @@ vim.api.nvim_create_autocmd('VimLeavePre', {
 })
 
 -- Python based settings
+-- For folding...
 vim.api.nvim_create_autocmd('BufReadPost', {
   callback = function()
     vim.cmd([[:set foldlevel=2]])
