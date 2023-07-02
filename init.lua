@@ -259,6 +259,20 @@ vim.api.nvim_create_autocmd('BufReadPost', {
   pattern = '*.py',
 })
 
+-- Quit nvim when current buffer becomes
+-- a no-name empty buffer
+vim.api.nvim_create_autocmd('BufDelete', {
+  callback = function()
+    --local buf_count = vim.fn.len(vim.fn.getbufinfo({buflisted=1}))
+    local buffer_name = vim.api.nvim_buf_get_name(0)
+    -- vim.cmd("echo 'Buffer count: " .. buf_count .. ", Buffer name: " .. buffer_name .. "'")
+    if buffer_name == "" then
+      vim.cmd([[:quit!]])
+    end
+  end,
+  pattern = '*',
+})
+
 
 -- [[ Configure Telescope ]]
 -- See `:help telescope` and `:help telescope.setup()`
