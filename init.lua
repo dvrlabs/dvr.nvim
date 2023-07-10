@@ -196,9 +196,12 @@ vim.keymap.set('n', '<F5>', execute_code, {})
 
 -- Add to your init.lua or a Lua configuration file
 local substitute_prompt = function()
-    local find = vim.fn.input("Find: ")
+    --local find = vim.fn.input("Find: ")
+    local find = vim.fn.expand("<cword>")
+    vim.api.nvim_echo({{'Replacing: "' .. find .. '"', 'Highlight'}}, true, {})
     local replace = vim.fn.input("Replace: ")
     vim.cmd("silent! %s/" .. find .. "/" .. replace .. "/g")
+    vim.api.nvim_echo({{find .. ' --> ' .. replace, 'Highlight'}}, true, {})
 end
 
 vim.keymap.set('n', '<leader>r', substitute_prompt, {desc = "Replace"})
