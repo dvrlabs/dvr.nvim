@@ -200,6 +200,10 @@ local substitute_prompt = function()
     local find = vim.fn.expand("<cword>")
     vim.api.nvim_echo({{'Replacing: "' .. find .. '"', 'Highlight'}}, true, {})
     local replace = vim.fn.input("Replace: ")
+    if replace == "" then
+      vim.api.nvim_echo({{'Canceled Replace.', 'Highlight'}}, true, {})
+      return
+    end
     vim.cmd("silent! %s/" .. find .. "/" .. replace .. "/g")
     vim.api.nvim_echo({{find .. ' --> ' .. replace, 'Highlight'}}, true, {})
 end
