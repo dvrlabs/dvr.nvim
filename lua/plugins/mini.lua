@@ -26,7 +26,8 @@ return {
             require('mini.sessions').setup({
               file = '.session.vim',
              })
-            require('mini.tabline').setup()
+            -- Switching to barbar.
+            --require('mini.tabline').setup()
             require('mini.comment').setup()
             require('mini.starter').setup({
                 header = header_txt,

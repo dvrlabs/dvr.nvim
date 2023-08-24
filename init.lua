@@ -137,8 +137,8 @@ vim.keymap.set('n', 'J', 'L', { noremap = true, silent = true })
 vim.keymap.set('n', 'K', 'H', { noremap = true, silent = true })
 
 -- These are used to switch previous, next buffer.
-vim.keymap.set('n', 'H', ':bp<CR>', { noremap = true, silent = true })
-vim.keymap.set('n', 'L', ':bn<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', 'H', ':BufferPrevious<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', 'L', ':BufferNext<CR>', { noremap = true, silent = true })
 
 -- Simplify Left, right, down, up, window navigation.
 vim.keymap.set('n', '<C-h>', '<C-w>h', { noremap = true, silent = true })
@@ -157,13 +157,13 @@ vim.keymap.set('n', '<leader>v', '<C-w>v', { noremap = true, silent = true, desc
 
 -- Delete (Close) buffer
 -- WK.register({ b = { name = "Buffer", } }, { prefix = "<leader>" })
-vim.keymap.set('n', '<leader>c', ':bd!<CR>', { desc = "Close Buffer", noremap = true, silent = true })
+vim.keymap.set('n', '<leader>c', ':BufferClose!<CR>', { desc = "Close Buffer", noremap = true, silent = true })
 
 -- Quit Window
 vim.keymap.set('n', '<leader>q', ':q<CR>', { desc = "Quit", silent = true })
 
 -- Save, and then close the buffer. If you want to save only, use :w manually.
-vim.keymap.set('n', '<leader>w', ':w<CR>:bd!<CR>', { desc = "Write" })
+vim.keymap.set('n', '<leader>w', ':w<CR>:BufferClose!<CR>', { desc = "Write" })
 
 -- File tree!
 vim.keymap.set('n', '<leader>e', ':Neotree toggle<CR>', { desc = "Neotree", silent = true })
