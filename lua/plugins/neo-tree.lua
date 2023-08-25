@@ -10,6 +10,21 @@ return {
     "MunifTanjim/nui.nvim",
   },
   config = function ()
-    require('neo-tree').setup {}
+    require('neo-tree').setup({
+      window = {
+        mappings = {
+          ['<cr>'] = function (state)
+            local node = state.tree:get_node()
+            if require("neo-tree.utils").is_expandable(node) then
+              state.commands["toggle_node"](state)
+            else
+              state.commands['open'](state)
+              vim.cmd('Neotree reveal')                  
+              -- vim.cmd('Neotree float toggle reveal_force_cwd dir=' .. vim.fn.getcwd()) -- I use this one.
+            end
+          end,
+        }
+      }
+    })
   end,
 }
