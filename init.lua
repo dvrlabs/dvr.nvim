@@ -455,7 +455,7 @@ local servers = {
       workspace = { checkThirdParty = false },
       telemetry = { enable = false },
     },
-  -- clangd = {},
+  clangd = {},
   -- gopls = {},
   -- pyright = {},
   -- tsserver = {},
