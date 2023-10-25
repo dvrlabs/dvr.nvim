@@ -182,6 +182,15 @@ vim.keymap.set('n', '<leader>nd', ':NoiceDismiss<CR>', { desc = "Dismiss Message
 -- Open Package Manager 
 vim.keymap.set('n', '<leader>p', ':Lazy<CR>', { desc = "Package Manager", silent = true })
 
+
+-- Not using this for now.
+--
+-- WK.register({ h = { name = "Harpoon", } }, { prefix = "<leader>" })
+-- vim.keymap.set('n', '<leader>hm', require("harpoon.ui").toggle_quick_menu, { desc = "Open harpoon menu", silent = true })
+-- vim.keymap.set('n', '<leader>hn', require("harpoon.ui").nav_next, { desc = "Next harpooned", silent = true })
+-- vim.keymap.set('n', '<leader>hp', require("harpoon.ui").nav_prev, { desc = "Previous harpooned", silent = true })
+-- vim.keymap.set('n', '<leader>hx', require("harpoon.mark").add_file, { desc = "Harpoon the file", silent = true })
+
 -- F5, execute code!
 local execute_code = function()
   if vim.bo.filetype == "python" then
@@ -301,7 +310,9 @@ pcall(require('telescope').load_extension, 'fzf')
 
 -- See `:help telescope.builtin`
 vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = 'Recently opened files' })
-vim.keymap.set('n', '<leader><space>', require('telescope.builtin').buffers, { desc = 'Existing buffers' })
+
+vim.keymap.set('n', '<leader><space>', ':BufferPick<CR>', { desc = 'Pick tab' })
+
 vim.keymap.set('n', '<leader>/', function()
   -- You can pass additional configuration to telescope to change theme, layout, etc.
   require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
