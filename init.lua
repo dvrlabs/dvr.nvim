@@ -250,12 +250,14 @@ vim.api.nvim_create_autocmd({'BufEnter'}, {
 
 -- [[ VimLeavePre ]]
 -- Stuff to do on exit.
-vim.api.nvim_create_autocmd('VimLeavePre', {
-  callback = function()
-    vim.cmd([[:mksession! .session.vim]])
-  end,
-  pattern = '*',
-})
+
+-- Session stuff disabled for now, this leaves annoying session files everywhere.
+-- vim.api.nvim_create_autocmd('VimLeavePre', {
+--   callback = function()
+--     vim.cmd([[:mksession! .session.vim]])
+--   end,
+--   pattern = '*',
+-- })
 
 -- Python based settings
 -- For folding...
