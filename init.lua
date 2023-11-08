@@ -159,8 +159,8 @@ vim.keymap.set('n', '<leader>v', '<C-w>v', { noremap = true, silent = true, desc
 -- WK.register({ b = { name = "Buffer", } }, { prefix = "<leader>" })
 vim.keymap.set('n', '<leader>c', ':BufferClose!<CR>', { desc = "Close Buffer", noremap = true, silent = true })
 
--- Quit Window
-vim.keymap.set('n', '<leader>q', ':q<CR>', { desc = "Quit", silent = true })
+-- Close buffer and Quit Window. If you want to quit the window only, use :q manually
+vim.keymap.set('n', '<leader>q', ':BufferClose!<CR>:q<CR>', { desc = "Quit by closing buffer and window.", silent = true })
 
 -- Save, and then close the buffer. If you want to save only, use :w manually.
 vim.keymap.set('n', '<leader>w', ':w<CR>:BufferClose!<CR>', { desc = "Write" })
@@ -182,15 +182,6 @@ vim.keymap.set('n', '<leader>nd', ':NoiceDismiss<CR>', { desc = "Dismiss Message
 -- Open Package Manager 
 vim.keymap.set('n', '<leader>p', ':Lazy<CR>', { desc = "Package Manager", silent = true })
 
-
--- Not using this for now.
---
--- WK.register({ h = { name = "Harpoon", } }, { prefix = "<leader>" })
--- vim.keymap.set('n', '<leader>hm', require("harpoon.ui").toggle_quick_menu, { desc = "Open harpoon menu", silent = true })
--- vim.keymap.set('n', '<leader>hn', require("harpoon.ui").nav_next, { desc = "Next harpooned", silent = true })
--- vim.keymap.set('n', '<leader>hp', require("harpoon.ui").nav_prev, { desc = "Previous harpooned", silent = true })
--- vim.keymap.set('n', '<leader>hx', require("harpoon.mark").add_file, { desc = "Harpoon the file", silent = true })
-
 -- F5, execute code!
 local execute_code = function()
   if vim.bo.filetype == "python" then
@@ -201,7 +192,6 @@ local execute_code = function()
 end
 
 vim.keymap.set('n', '<F5>', execute_code, {})
-
 
 -- Add to your init.lua or a Lua configuration file
 local substitute_prompt = function()
@@ -277,13 +267,10 @@ vim.api.nvim_create_autocmd('BufReadPost', {
   pattern = '*.py',
 })
 
--- Quit nvim when current buffer becomes
--- a no-name empty buffer
+-- Quit nvim when current buffer become a no-name empty buffer
 vim.api.nvim_create_autocmd('BufDelete', {
   callback = function()
-    --local buf_count = vim.fn.len(vim.fn.getbufinfo({buflisted=1}))
     local buffer_name = vim.api.nvim_buf_get_name(0)
-    -- vim.cmd("echo 'Buffer count: " .. buf_count .. ", Buffer name: " .. buffer_name .. "'")
     if buffer_name == "" then
       vim.cmd([[:quit!]])
     end
