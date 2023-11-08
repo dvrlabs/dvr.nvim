@@ -260,12 +260,12 @@ vim.api.nvim_create_autocmd({'BufEnter'}, {
 
 -- Python based settings
 -- For folding...
-vim.api.nvim_create_autocmd('BufReadPost', {
-  callback = function()
-    vim.cmd([[:set foldlevel=2]])
-  end,
-  pattern = '*.py',
-})
+-- vim.api.nvim_create_autocmd('BufReadPost', {
+--   callback = function()
+--     vim.cmd([[:set foldlevel=2]])
+--   end,
+--   pattern = '*.py',
+-- })
 
 -- Quit nvim when current buffer become a no-name empty buffer
 vim.api.nvim_create_autocmd('BufDelete', {
