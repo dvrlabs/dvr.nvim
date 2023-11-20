@@ -100,21 +100,24 @@ WK.register({ ld = { name = "Diagnostics", } }, { prefix = "<leader>" })
 
 -- Define the function for going to the next diagnostic
 local function goto_next_diagnostic()
-    vim.diagnostic.goto_next()
-    _G.last_action = goto_next_diagnostic
+  vim.diagnostic.goto_next()
+  _G.last_action = goto_next_diagnostic
 end
 
 -- Define the function for going to the previous diagnostic
 local function goto_prev_diagnostic()
-    vim.diagnostic.goto_prev()
-    _G.last_action = goto_prev_diagnostic
+  vim.diagnostic.goto_prev()
+  _G.last_action = goto_prev_diagnostic
 end
 
 -- Set your mappings using these functions
-vim.keymap.set('n', '<leader>ldn', goto_next_diagnostic, { desc = "Go to next diagnostic message", noremap = true, silent = true })
-vim.keymap.set('n', '<leader>ldp', goto_prev_diagnostic, { desc = "Go to previous diagnostic message", noremap = true, silent = true })
+vim.keymap.set('n', '<leader>ldn', goto_next_diagnostic,
+  { desc = "Go to next diagnostic message", noremap = true, silent = true })
+vim.keymap.set('n', '<leader>ldp', goto_prev_diagnostic,
+  { desc = "Go to previous diagnostic message", noremap = true, silent = true })
 
-vim.keymap.set('n', ',', function() if _G.last_action then _G.last_action() end end, { desc = "Repeat last action", noremap = true, silent = true })
+vim.keymap.set('n', ',', function() if _G.last_action then _G.last_action() end end,
+  { desc = "Repeat last action", noremap = true, silent = true })
 
 
 
@@ -160,7 +163,8 @@ vim.keymap.set('n', '<leader>v', '<C-w>v', { noremap = true, silent = true, desc
 vim.keymap.set('n', '<leader>c', ':BufferClose!<CR>', { desc = "Close Buffer", noremap = true, silent = true })
 
 -- Close buffer and Quit Window. If you want to quit the window only, use :q manually
-vim.keymap.set('n', '<leader>q', ':BufferClose!<CR>:q<CR>', { desc = "Quit by closing buffer and window.", silent = true })
+vim.keymap.set('n', '<leader>q', ':BufferClose!<CR>:q<CR>',
+  { desc = "Quit by closing buffer and window.", silent = true })
 
 -- Save, and then close the buffer. If you want to save only, use :w manually.
 vim.keymap.set('n', '<leader>w', ':w<CR>:BufferClose!<CR>', { desc = "Write" })
@@ -179,7 +183,7 @@ WK.register({ n = { name = "Noice", } }, { prefix = "<leader>" })
 vim.keymap.set('n', '<leader>nh', ':NoiceHistory<CR>', { desc = "History", silent = true })
 vim.keymap.set('n', '<leader>nd', ':NoiceDismiss<CR>', { desc = "Dismiss Messages", silent = true })
 
--- Open Package Manager 
+-- Open Package Manager
 vim.keymap.set('n', '<leader>p', ':Lazy<CR>', { desc = "Package Manager", silent = true })
 
 -- F5, execute code!
@@ -193,21 +197,84 @@ end
 
 vim.keymap.set('n', '<F5>', execute_code, {})
 
--- Add to your init.lua or a Lua configuration file
+-- Search and replace
 local substitute_prompt = function()
-    --local find = vim.fn.input("Find: ")
-    local find = vim.fn.expand("<cword>")
-    vim.api.nvim_echo({{'Replacing: "' .. find .. '"', 'Highlight'}}, true, {})
-    local replace = vim.fn.input("Replace: ")
-    if replace == "" then
-      vim.api.nvim_echo({{'Canceled Replace.', 'Highlight'}}, true, {})
-      return
-    end
-    vim.cmd("silent! %s/" .. find .. "/" .. replace .. "/g")
-    vim.api.nvim_echo({{find .. ' --> ' .. replace, 'Highlight'}}, true, {})
+  --local find = vim.fn.input("Find: ")
+  local find = vim.fn.expand("<cword>")
+  vim.api.nvim_echo({ { 'Replacing: "' .. find .. '"', 'Highlight' } }, true, {})
+  local replace = vim.fn.input("Replace: ")
+  if replace == "" then
+    vim.api.nvim_echo({ { 'Canceled Replace.', 'Highlight' } }, true, {})
+    return
+  end
+  vim.cmd("silent! %s/" .. find .. "/" .. replace .. "/g")
+  vim.api.nvim_echo({ { find .. ' --> ' .. replace, 'Highlight' } }, true, {})
 end
 
-vim.keymap.set('n', '<leader>r', substitute_prompt, {desc = "Replace"})
+vim.keymap.set('n', '<leader>r', substitute_prompt, { desc = "Replace" })
+
+local function get_filename_from_path(full_path)
+    return full_path:match("^.+/(.+)$") or full_path
+end
+
+local last_destination = ""
+local scp_file = function()
+  local file_path = vim.api.nvim_buf_get_name(0)
+
+  -- Use the last destination as the default value in the prompt
+  local prompt = "Destination: "
+  if last_destination ~= "" then
+    prompt = "Destination (" .. last_destination .. "): "
+  end
+
+  local destinationInput = vim.fn.input(prompt)
+  local remote_path = destinationInput ~= "" and destinationInput or last_destination
+  if remote_path == "" then
+    print("No destination provided.")
+    return
+  end
+
+  -- Store the provided destination for next time
+  last_destination = remote_path
+
+  vim.api.nvim_echo({ { get_filename_from_path(file_path) .. ' --> ' .. remote_path, 'Highlight' } }, true, {})
+  remote_path = "remote_host:" .. remote_path
+
+  local scp_command = string.format("scp %s %s >/dev/null 2>&1", file_path, remote_path)
+
+  local proc = io.popen(scp_command, "w")
+  if proc then
+    proc:write("\n")
+    proc:close()
+  else
+    vim.api.nvim_echo({ { 'Failed to start command' , 'Highlight' } }, true, {})
+  end
+end
+
+vim.keymap.set('n', '<leader>b', scp_file, {desc = "Beam"})
+
+local dispatch_remote_command = function()
+  local prompt = "Command: "
+  local command = vim.fn.input(prompt)
+
+  if command == "" then
+    vim.api.nvim_echo({ { 'Canceled dispatch remote command.', 'Highlight' } }, true, {})
+    return
+  end
+
+  local full_command = 'ssh remote_host "source ~/.bashrc; sleep 1;' .. command .. ' > /dev/null 2>&1 &"'
+
+  local proc = io.popen(full_command, "w")
+  if proc then
+    proc:write("\n")
+    proc:close()
+  else
+    vim.api.nvim_echo({ { 'Failed to start command' , 'Highlight' } }, true, {})
+  end
+  vim.api.nvim_echo({ { command .. ' -->  Remote' , 'Highlight' } }, true, {})
+end
+
+vim.keymap.set('n', '<leader>d', dispatch_remote_command, {desc = "Dispatch remote command"})
 
 -- Custom command that will take a list from a text file, and open buffers for each list.
 vim.cmd [[command OpenFileList let i=1 | while i <= line('$') | execute 'tabedit '.getline(i) | tabclose | let i += 1 | endwhile]]
@@ -234,9 +301,9 @@ vim.api.nvim_create_autocmd('TextChangedT', {
 })
 
 -- If buffers > 1, show the tabline.
-vim.api.nvim_create_autocmd({'BufEnter'}, {
+vim.api.nvim_create_autocmd({ 'BufEnter' }, {
   callback = function()
-    local buf_count = vim.fn.len(vim.fn.getbufinfo({buflisted=1}))
+    local buf_count = vim.fn.len(vim.fn.getbufinfo({ buflisted = 1 }))
     -- if there are more than one buffer, show the tabline, else hide it
     if buf_count > 1 then
       vim.o.showtabline = 2
@@ -441,12 +508,12 @@ end
 local servers = {
   pylsp = {
     plugins = {
-     ruff = {
-      -- Configure ruff by adding a pyproject.toml in the project root.
-      -- See https://github.com/charliermarsh/ruff
-      enabled = true,
-      extendSelect = { "I" },
-     },
+      ruff = {
+        -- Configure ruff by adding a pyproject.toml in the project root.
+        -- See https://github.com/charliermarsh/ruff
+        enabled = true,
+        extendSelect = { "I" },
+      },
     }
   },
   rust_analyzer = {},
@@ -455,10 +522,10 @@ local servers = {
       workspace = { checkThirdParty = false },
       telemetry = { enable = false },
     },
-  clangd = {},
-  -- gopls = {},
-  -- pyright = {},
-  -- tsserver = {},
+    clangd = {},
+    -- gopls = {},
+    -- pyright = {},
+    -- tsserver = {},
   },
 }
 
