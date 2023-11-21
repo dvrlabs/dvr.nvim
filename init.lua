@@ -237,7 +237,6 @@ local scp_file = function()
   -- Store the provided destination for next time
   last_destination = remote_path
 
-  vim.api.nvim_echo({ { get_filename_from_path(file_path) .. ' --> ' .. remote_path, 'Highlight' } }, true, {})
   remote_path = "remote_host:" .. remote_path
 
   local scp_command = string.format("scp %s %s >/dev/null 2>&1", file_path, remote_path)
@@ -246,6 +245,7 @@ local scp_file = function()
   if proc then
     proc:write("\n")
     proc:close()
+    vim.api.nvim_echo({ { get_filename_from_path(file_path) .. ' --> ' .. remote_path, 'Highlight' } }, true, {})
   else
     vim.api.nvim_echo({ { 'Failed to start command' , 'Highlight' } }, true, {})
   end
