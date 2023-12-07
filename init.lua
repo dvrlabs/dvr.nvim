@@ -254,6 +254,7 @@ end
 vim.keymap.set('n', '<leader>b', scp_file, {desc = "Beam"})
 
 local dispatch_remote_command = function()
+  -- ln -s /etc/dropbear/authorized_keys ~/.ssh/authorized_keys
   local prompt = "Command: "
   local command = vim.fn.input(prompt)
 
@@ -262,7 +263,7 @@ local dispatch_remote_command = function()
     return
   end
 
-  local full_command = 'ssh remote_host "source ~/.bashrc; sleep 1;' .. command .. ' > /dev/null 2>&1 &"'
+  local full_command = 'ssh -o PreferredAuthentications=publickey remote_host "source ~/.bashrc; ' .. command .. ' > /dev/null 2>&1 &"'
 
   local proc = io.popen(full_command, "w")
   if proc then
