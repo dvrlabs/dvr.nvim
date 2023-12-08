@@ -211,7 +211,22 @@ local substitute_prompt = function()
   vim.api.nvim_echo({ { find .. ' --> ' .. replace, 'Highlight' } }, true, {})
 end
 
-vim.keymap.set('n', '<leader>r', substitute_prompt, { desc = "Replace" })
+vim.keymap.set('n', '<leader>r', substitute_prompt, { desc = "Replace word under cursor" })
+
+-- Search and replace
+local substitute_prompt_full = function()
+  local find = vim.fn.input("Find: ")
+  vim.api.nvim_echo({ { 'Replacing: "' .. find .. '"', 'Highlight' } }, true, {})
+  local replace = vim.fn.input("Replace: ")
+  if replace == "" then
+    vim.api.nvim_echo({ { 'Canceled Replace.', 'Highlight' } }, true, {})
+    return
+  end
+  vim.cmd("silent! %s/" .. find .. "/" .. replace .. "/g")
+  vim.api.nvim_echo({ { find .. ' --> ' .. replace, 'Highlight' } }, true, {})
+end
+
+vim.keymap.set('n', '<leader>R', substitute_prompt_full, { desc = "Replace word defined" })
 
 local function get_filename_from_path(full_path)
     return full_path:match("^.+/(.+)$") or full_path
