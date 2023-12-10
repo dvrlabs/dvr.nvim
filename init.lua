@@ -120,7 +120,6 @@ vim.keymap.set('n', ',', function() if _G.last_action then _G.last_action() end 
   { desc = "Repeat last action", noremap = true, silent = true })
 
 
-
 vim.keymap.set('n', '<leader>ldf', vim.diagnostic.open_float, { desc = "Open floating diagnostic message" })
 vim.keymap.set('n', '<leader>ldl', vim.diagnostic.setloclist, { desc = "Open diagnostics list" })
 
@@ -229,7 +228,7 @@ end
 vim.keymap.set('n', '<leader>R', substitute_prompt_full, { desc = "Replace word defined" })
 
 local function get_filename_from_path(full_path)
-    return full_path:match("^.+/(.+)$") or full_path
+  return full_path:match("^.+/(.+)$") or full_path
 end
 
 local last_destination = ""
@@ -262,11 +261,11 @@ local scp_file = function()
     proc:close()
     vim.api.nvim_echo({ { get_filename_from_path(file_path) .. ' --> ' .. remote_path, 'Highlight' } }, true, {})
   else
-    vim.api.nvim_echo({ { 'Failed to start command' , 'Highlight' } }, true, {})
+    vim.api.nvim_echo({ { 'Failed to start command', 'Highlight' } }, true, {})
   end
 end
 
-vim.keymap.set('n', '<leader>b', scp_file, {desc = "Beam"})
+vim.keymap.set('n', '<leader>b', scp_file, { desc = "Beam" })
 
 local dispatch_remote_command = function()
   -- ln -s /etc/dropbear/authorized_keys ~/.ssh/authorized_keys
@@ -278,19 +277,20 @@ local dispatch_remote_command = function()
     return
   end
 
-  local full_command = 'ssh -o PreferredAuthentications=publickey remote_host "source ~/.bashrc; ' .. command .. ' > /dev/null 2>&1 &"'
+  local full_command = 'ssh -o PreferredAuthentications=publickey remote_host "source ~/.bashrc; ' ..
+  command .. ' > /dev/null 2>&1 &"'
 
   local proc = io.popen(full_command, "w")
   if proc then
     proc:write("\n")
     proc:close()
   else
-    vim.api.nvim_echo({ { 'Failed to start command' , 'Highlight' } }, true, {})
+    vim.api.nvim_echo({ { 'Failed to start command', 'Highlight' } }, true, {})
   end
-  vim.api.nvim_echo({ { command .. ' -->  Remote' , 'Highlight' } }, true, {})
+  vim.api.nvim_echo({ { command .. ' -->  Remote', 'Highlight' } }, true, {})
 end
 
-vim.keymap.set('n', '<leader>d', dispatch_remote_command, {desc = "Dispatch remote command"})
+vim.keymap.set('n', '<leader>f', dispatch_remote_command, { desc = "Fire remote command" })
 
 -- Custom command that will take a list from a text file, and open buffers for each list.
 vim.cmd [[command OpenFileList let i=1 | while i <= line('$') | execute 'tabedit '.getline(i) | tabclose | let i += 1 | endwhile]]
