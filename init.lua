@@ -98,6 +98,17 @@ vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = tr
 -- Diagnostic keymaps
 WK.register({ ld = { name = "Diagnostics", } }, { prefix = "<leader>" })
 
+
+
+-- Define the function for going to the next diagnostic
+local function set_last_action_macro()
+  vim.cmd('normal @@')
+  _G.last_action = set_last_action_macro
+end
+
+vim.keymap.set('n', '<leader>m', set_last_action_macro, { desc = "Attach last macro to ','" })
+
+
 -- Define the function for going to the next diagnostic
 local function goto_next_diagnostic()
   vim.diagnostic.goto_next()
