@@ -29,7 +29,7 @@ vim.opt.rtp:prepend(lazypath)
 
 -- Import all my plugins!
 require('lazy').setup({ { import = 'plugins' } })
-
+--
 -- [[ Setting options ]]
 -- See `:help vim.o`
 
@@ -100,7 +100,7 @@ WK.register({ ld = { name = "Diagnostics", } }, { prefix = "<leader>" })
 
 
 
--- Define the function for going to the next diagnostic
+--
 local function set_last_action_macro()
   vim.cmd('normal @@')
   _G.last_action = set_last_action_macro
@@ -180,7 +180,7 @@ vim.keymap.set('n', '<leader>q', ':BufferClose!<CR>:q<CR>',
 vim.keymap.set('n', '<leader>w', ':w<CR>:BufferClose!<CR>', { desc = "Write" })
 
 -- File tree!
-vim.keymap.set('n', '<leader>e', ':Neotree toggle<CR>', { desc = "Neotree", silent = true })
+-- vim.keymap.set('n', '<leader>e', '', { desc = "", silent = true })
 
 -- Repeat last macro with ',' instead of '@@'
 -- vim.keymap.set('n', ',', '@@', {})
