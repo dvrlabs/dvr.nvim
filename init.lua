@@ -186,7 +186,7 @@ vim.keymap.set('n', '<leader>w', ':w<CR>:BufferClose!<CR>', { desc = "Write" })
 -- vim.keymap.set('n', ',', '@@', {})
 
 -- Open split open terminal and resize, enter insert mode to work in terminal.
-vim.keymap.set('n', '<leader>t', ':split | resize 10 | term<CR>i', { desc = "Terminal", silent = true })
+vim.keymap.set('n', '<leader>t', ':ToggleTerm<CR>', { desc = "Terminal", silent = true })
 
 -- Noice
 WK.register({ n = { name = "Noice", } }, { prefix = "<leader>" })
@@ -200,8 +200,7 @@ vim.keymap.set('n', '<leader>p', ':Lazy<CR>', { desc = "Package Manager", silent
 local execute_code = function()
   if vim.bo.filetype == "python" then
     local run_cmd = "python " .. vim.fn.expand('%:p')
-    vim.cmd("split | resize 10 | term " .. run_cmd)
-    vim.cmd("startinsert")
+    vim.cmd("TermExec cmd='" .. run_cmd .. "'")
   end
 end
 
